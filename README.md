@@ -188,6 +188,13 @@ python -m experiments.benchmark
 bash scripts/run_experiment.sh
 ```
 
+### Reproducibility Notes
+
+- The benchmark tables in this README are derived from the checked-in result artifact at [`results/benchmark_results.json`](results/benchmark_results.json).
+- The default experiments target GPT-2 on WikiText-2 so the repo stays lightweight enough to run on a single workstation.
+- Wall-clock timings and memory numbers will move with hardware, PyTorch version, and whether you enable mixed precision or alternative tokenization settings.
+- For apples-to-apples comparisons, keep the base model, dataset split, and target modules fixed when sweeping LoRA rank.
+
 ## Technical Details
 
 ### Why Low-Rank Adaptation Works
@@ -223,6 +230,13 @@ During training, only `A` and `B` accumulate gradients. For GPT-2 (124M params):
 - **Activation memory**: Identical to base model (same forward pass structure)
 
 This translates to **55–64% peak memory reduction** in practice.
+
+## Current Limitations
+
+- The implementation is intentionally focused on GPT-2 style decoder blocks; encoder-decoder adapters and multimodal backbones are out of scope for this repo.
+- The experiments compare full fine-tuning and LoRA on language modeling loss, not downstream instruction-following or task-transfer benchmarks.
+- Quantized training variants such as QLoRA are referenced in the README, but they are not implemented in this codebase.
+- Target module selection is explicit and manual, which keeps the internals understandable but means architecture-specific adapter recipes are still up to the user.
 
 ## Comparison with Existing Libraries
 
